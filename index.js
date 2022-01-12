@@ -90,7 +90,11 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
           }
           break;
         case '@ml':
-          msg.channel.send(`メモ一覧です。\`\`\`${memo.join('\n')}\`\`\``);
+          if (memo.length == 0) {
+            msg.channel.send(`メモはありません。`);
+          } else {
+            msg.channel.send(`メモ一覧です。\`\`\`${memo.join('\n')}\`\`\``);
+          }
           break;
         case '@h':
           msg.channel.send(`コマンド一覧です。\`\`\`javascript\n${getHelp()}\`\`\``);
@@ -124,16 +128,20 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
           break;
         case '@trs':
           if (timername.indexOf(cnts[2]) != -1) {
-            timernow.splice(timername[timername.indexOf(cnts[2])], 1);
-            timersecond.splice(timername[timername.indexOf(cnts[2])], 1);
-            timername.splice(timername[timername.indexOf(cnts[2])], 1);
+            timernow.splice(timername.indexOf(cnts[2]), 1);
+            timersecond.splice(timername.indexOf(cnts[2]), 1);
+            timername.splice(timername.indexOf(cnts[2]), 1);
             msg.channel.send(`${cnts[2]} のタイマーをリセットしました。`);
           } else {
             msg.channel.send(`${cnts[2]} というタイマーはありません。`);
           }
           break;
         case '@tl':
-          msg.channel.send(`タイマー一覧です。\`\`\`javascript\n${getTimer()}\`\`\``);
+          if (timername.length == 0) {
+            msg.channel.send(`タイマーはありません。`);
+          } else {
+            msg.channel.send(`タイマー一覧です。\`\`\`javascript\n${getTimer()}\`\`\``);
+          }
       }
     }
   }
