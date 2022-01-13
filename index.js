@@ -4,10 +4,27 @@ var timername = [], timernow = [], timersecond = [], memo = [], message;
 client.on('ready', () => {
   console.log(`${client.user.tag} でログインしています。`)
 })
-var command = {'memo':{'add':{'%s':'@mas'},'delete':{'%s':'@mds'},'list':'@ml'},'ping':'@p','help':'@h','timer':{'set':{'%i':{'%u':'@tsi','%s':'@tsis'}},'reset':{'%s':'@trs'},'list':'@tl'}};
+var command = 
+{
+  'memo':{'add':{'%s':'@mas'},'delete':{'%s':'@mds'},'list':'@ml'},
+  'ping':'@p',
+  'help':{'%u':'@h','%s':'@hs'},
+  'timer':{'set':{'%i':{'%u':'@tsi','%s':'@tsis'}},'reset':{'%s':'@trs'},'list':'@tl'},
+  'say':{'%s':'@ss'},
+  'status':{'%i':'@si'},
+  'test':'@t'
+};
 // %s string, %i int, %u undefined
-var info = {'memo':'!memo (add \'内容\'|delete \'内容\'|list)','ping':'!ping','help':'!help','timer':'!timer (set \'秒数\' (\'題名\')|reset \'題名\'|list)'};
-var com = ['help','ping','memo','timer'];
+var info = 
+{
+  'memo':'!memo (add \'内容\'|delete \'内容\'|list)',
+  'ping':'!ping',
+  'help':'!help (\'コマンド名\')',
+  'timer':'!timer (set \'秒数\' (\'題名\')|reset \'題名\'|list)',
+  'say':'!say \'内容\'',
+  'status':'!status \'ユーザID\''
+};
+var com = ['help','ping','memo','timer','say','status'];
 
 function getTimer () {
   let tmp = '';
@@ -62,14 +79,14 @@ function discommand (content) {
 }
 
 client.on('messageCreate', async msg => { if (!msg.author.bot) {
-  console.log(`受信: ${msg.content}`);
+  console.log(`受信: ${msg.content} (by ${msg.author.username})`);
   message = msg;
   cnt = msg.content;
   cnts = msg.content.split(' ');
   tmp = discommand(msg.content);
   if (tmp != undefined) {
     if (String(tmp).charAt(0) == '!') {
-      msg.channel.send(`${cnts[0].substr(1)}コマンドはこのように指定してください。\`\`\`javascript\n${tmp}\`\`\``)
+      msg.channel.send(`${cnts[0].substr(1)}コマンドはこのように指定してください。\`\`\`javascript\n${tmp}\`\`\``);
     } else {
       console.log(`コマンド実行: ${tmp}`);
       ttmp = Date.now();
@@ -99,6 +116,13 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
         case '@h':
           msg.channel.send(`コマンド一覧です。\`\`\`javascript\n${getHelp()}\`\`\``);
           break;
+        case '@hs':
+          if (info[cnts[1]] == undefined) {
+            msg.channel.send(`そのようなコマンドはありません。`);
+          } else {
+            msg.channel.send(`${cnts[1]}コマンドはこのように指定してください。\`\`\`javascript\n${info[cnts[1]]}\`\`\``);
+          }
+          break;
         case '@tsi':
           if (sizensu(cnts[2])) {
             timername.push(ttmp);
@@ -112,10 +136,10 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
         case '@tsis':
           if (sizensu(cnts[2])) {
             if (timername.indexOf(cnts[3]) != -1) {
-              timername.push(join(cnts[3], '1'));
+              timername.push(join(ttmp, '1'));
               timernow.push(ttmp);
               timersecond.push(Number(cnts[2]));
-              msg.channel.send(`${cnts[3]} のタイマーは既に使われています。\n代わりに、${join(cnts[3], '1')} のタイマーを${cnts[2]}秒に設定しました。`);
+              msg.channel.send(`${cnts[3]} のタイマーは既に使われています。\n代わりに、${join(ttmp, '1')} のタイマーを${cnts[2]}秒に設定しました。`);
             } else {
               timername.push(cnts[3]);
               timernow.push(ttmp);
@@ -142,6 +166,13 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
           } else {
             msg.channel.send(`タイマー一覧です。\`\`\`javascript\n${getTimer()}\`\`\``);
           }
+          break;
+        case '@ss':
+          msg.channel.send(cnts[1]);
+        case '@si':
+          // user = await client.users.fetch(cnts[1]);
+          // user = await client.members.fetch(cnts[1]);
+          // msg.channel.send(user.presence.activities[0].state)
       }
     }
   }
