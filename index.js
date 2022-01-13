@@ -86,41 +86,41 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
   tmp = discommand(msg.content);
   if (tmp != undefined) {
     if (String(tmp).charAt(0) == '!') {
-      msg.channel.send(`${cnts[0].substr(1)}コマンドはこのように指定してください。\`\`\`javascript\n${tmp}\`\`\``);
+      msgSend(`${cnts[0].substr(1)}コマンドはこのように指定してください。\`\`\`javascript\n${tmp}\`\`\``);
     } else {
       console.log(`コマンド実行: ${tmp}`);
       ttmp = Date.now();
       switch(tmp) {
         case '@p':
-          msg.channel.send(`pong! on ${client.ws.ping}ms`);
+          msgSend(`pong! on ${client.ws.ping}ms`);
           break;
         case '@mas':
           memo.push(cnts[2]);
-          msg.channel.send(`${cnts[2]}をメモに追加しました。`);
+          msgSend(`${cnts[2]}をメモに追加しました。`);
           break;
         case '@mds':
           if (memo.indexOf(cnts[2]) == -1) {
-            msg.channel.send(`${cnts[2]}というメモはありません。`);
+            msgSend(`${cnts[2]}というメモはありません。`);
           } else {
             memo.splice(memo.indexOf(cnts[2]), 1);
-          msg.channel.send(`${cnts[2]}をメモから削除しました。`);
+          msgSend(`${cnts[2]}をメモから削除しました。`);
           }
           break;
         case '@ml':
           if (memo.length == 0) {
-            msg.channel.send(`メモはありません。`);
+            msgSend(`メモはありません。`);
           } else {
-            msg.channel.send(`メモ一覧です。\`\`\`${memo.join('\n')}\`\`\``);
+            msgSend(`メモ一覧です。\`\`\`${memo.join('\n')}\`\`\``);
           }
           break;
         case '@h':
-          msg.channel.send(`コマンド一覧です。\`\`\`javascript\n${getHelp()}\`\`\``);
+          msgSend(`コマンド一覧です。\`\`\`javascript\n${getHelp()}\`\`\``);
           break;
         case '@hs':
           if (info[cnts[1]] == undefined) {
-            msg.channel.send(`そのようなコマンドはありません。`);
+            msgSend(`そのようなコマンドはありません。`);
           } else {
-            msg.channel.send(`${cnts[1]}コマンドはこのように指定してください。\`\`\`javascript\n${info[cnts[1]]}\`\`\``);
+            msgSend(`${cnts[1]}コマンドはこのように指定してください。\`\`\`javascript\n${info[cnts[1]]}\`\`\``);
           }
           break;
         case '@tsi':
@@ -128,26 +128,26 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
             timername.push(ttmp);
             timernow.push(ttmp);
             timersecond.push(Number(cnts[2]));
-            msg.channel.send(`${ttmp} のタイマーを${cnts[2]}秒に設定しました。`);
+            msgSend(`${ttmp} のタイマーを${cnts[2]}秒に設定しました。`);
           } else {
-            msg.channel.send(`秒数は自然数を指定してください。`);
+            msgSend(`秒数は自然数を指定してください。`);
           }
           break;
         case '@tsis':
           if (sizensu(cnts[2])) {
             if (timername.indexOf(cnts[3]) != -1) {
-              timername.push(join(ttmp, '1'));
+              timername.push(ttmp);
               timernow.push(ttmp);
               timersecond.push(Number(cnts[2]));
-              msg.channel.send(`${cnts[3]} のタイマーは既に使われています。\n代わりに、${join(ttmp, '1')} のタイマーを${cnts[2]}秒に設定しました。`);
+              msgSend(`${cnts[3]} のタイマーは既に使われています。\n代わりに、${ttmp} のタイマーを${cnts[2]}秒に設定しました。`);
             } else {
               timername.push(cnts[3]);
               timernow.push(ttmp);
               timersecond.push(Number(cnts[2]));
-              msg.channel.send(`${cnts[3]} のタイマーを${cnts[2]}秒に設定しました。`);
+              msgSend(`${cnts[3]} のタイマーを${cnts[2]}秒に設定しました。`);
             }
           } else {
-            msg.channel.send(`秒数は自然数を指定してください。`);
+            msgSend(`秒数は自然数を指定してください。`);
           }
           break;
         case '@trs':
@@ -155,28 +155,36 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
             timernow.splice(timername.indexOf(cnts[2]), 1);
             timersecond.splice(timername.indexOf(cnts[2]), 1);
             timername.splice(timername.indexOf(cnts[2]), 1);
-            msg.channel.send(`${cnts[2]} のタイマーをリセットしました。`);
+            msgSend(`${cnts[2]} のタイマーをリセットしました。`);
           } else {
-            msg.channel.send(`${cnts[2]} というタイマーはありません。`);
+            msgSend(`${cnts[2]} というタイマーはありません。`);
           }
           break;
         case '@tl':
           if (timername.length == 0) {
-            msg.channel.send(`タイマーはありません。`);
+            msgSend(`タイマーはありません。`);
           } else {
-            msg.channel.send(`タイマー一覧です。\`\`\`javascript\n${getTimer()}\`\`\``);
+            msgSend(`タイマー一覧です。\`\`\`javascript\n${getTimer()}\`\`\``);
           }
           break;
         case '@ss':
-          msg.channel.send(cnts[1]);
+          msgSend(cnts[1]);
         case '@si':
           // user = await client.users.fetch(cnts[1]);
           // user = await client.members.fetch(cnts[1]);
-          // msg.channel.send(user.presence.activities[0].state)
+          // msgSend(user.presence.activities[0].state)
       }
     }
   }
 }})
+
+function msgSend (content) {
+  if (content == undefined) {
+    message.channel.send(`予期せぬエラーが発生しました。\nこの表示が何回も続く場合、ボット作成者にお問い合わせください。`);
+  } else {
+    message.channel.send(content);
+  }
+}
 
 const log = function(){
   for (i = 0; i < timername.length; i++) {
