@@ -112,10 +112,10 @@ client.on('messageCreate', async msg => { if (!msg.author.bot) {
         case '@tsis':
           if (sizensu(cnts[2])) {
             if (timername.indexOf(cnts[3]) != -1) {
-              timername.push(ttmp);
+              timername.push(join(cnts[3], '1'));
               timernow.push(ttmp);
               timersecond.push(Number(cnts[2]));
-              msg.channel.send(`${cnts[3]} のタイマーは既に使われています。\n代わりに、${ttmp} のタイマーを${cnts[2]}秒に設定しました。`);
+              msg.channel.send(`${cnts[3]} のタイマーは既に使われています。\n代わりに、${join(cnts[3], '1')} のタイマーを${cnts[2]}秒に設定しました。`);
             } else {
               timername.push(cnts[3]);
               timernow.push(ttmp);
